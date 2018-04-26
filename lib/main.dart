@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutterantistorm/entriesstorage.dart';
 import 'package:flutterantistorm/entrycount.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(new MyApp());
 
@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   EntryCount entryCount;
+  EntriesStorage entriesStorage;
   int _timesCount = 0;
 
   _MyHomePageState() {
@@ -40,6 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
         _timesCount = value;
       });
     });
+
+    entriesStorage = new EntriesStorage();
+    entriesStorage.loadEntries();
   }
 
   Future _addEntry() async {
@@ -48,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _timesCount = value;
       });
     });
+    entriesStorage.addEntry(new DateTime.now().millisecondsSinceEpoch);
   }
 
   @override
