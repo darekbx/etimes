@@ -43,7 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     entriesStorage = new EntriesStorage();
-    entriesStorage.loadEntries();
+    entriesStorage.loadEntries().then((list) {
+      print(list);
+    });
   }
 
   Future _addEntry() async {
@@ -53,6 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
     entriesStorage.addEntry(new DateTime.now().millisecondsSinceEpoch);
+    entriesStorage.loadEntries().then((list) {
+      print(list);
+    });
   }
 
   @override

@@ -23,7 +23,6 @@ class EntriesStorage {
           linesInt.add(parsedValue);
         }
       }
-      print(linesInt);
       return linesInt;
     }
     else {
