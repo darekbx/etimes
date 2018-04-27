@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutterantistorm/entriesstorage.dart';
 import 'package:flutterantistorm/entrycount.dart';
+import 'package:flutterantistorm/numberpicker.dart';
 
 void main() => runApp(new MyApp());
 
@@ -76,6 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
               new Text("Entries count: "),
               new Text('$_timesCount'),
+              new NumberPicker(23, (value) {
+                print("Changed $value");
+              })
 
             ],
           ),
