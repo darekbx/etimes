@@ -21,6 +21,8 @@ class DotChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (values == null) return;
+
     final int max = 23 * 60 + 59;
     final double ratio = size.width / max;
 
