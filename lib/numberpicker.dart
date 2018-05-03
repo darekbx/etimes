@@ -4,24 +4,26 @@ import 'package:meta/meta.dart';
 class NumberPicker extends StatefulWidget {
 
   final int maximum;
+  final int initialValue;
   final ValueChanged<int> onChanged;
 
-  const NumberPicker(
-      @required this.maximum,
-      @required this.onChanged);
+  NumberPicker(@required this.maximum, this.onChanged, this.initialValue, {Key key}) :
+        super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _NumberPickerState(maximum, onChanged);
+  State<StatefulWidget> createState() =>
+      new NumberPickerState(maximum, initialValue, onChanged,);
 }
 
-class _NumberPickerState extends State<NumberPicker> {
+class NumberPickerState extends State<NumberPicker> {
 
   ValueChanged<int> _onChanged;
   int _maximum;
   int _value = 0;
 
-  _NumberPickerState(int maximum, ValueChanged<int> onChanged) {
+  NumberPickerState(int maximum, int initialValue, ValueChanged<int> onChanged) {
     this._maximum = maximum;
+    this._value = initialValue;
     this._onChanged = onChanged;
   }
 
@@ -29,7 +31,9 @@ class _NumberPickerState extends State<NumberPicker> {
     if (_value >= _maximum) return;
     setState(() {
       _value = _value + 1;
-      _onChanged(_value);
+      if (_onChanged != null) {
+        _onChanged(_value);
+      }
     });
   }
 
@@ -37,7 +41,19 @@ class _NumberPickerState extends State<NumberPicker> {
     if (_value == 0) return;
     setState(() {
       _value = _value - 1;
-      _onChanged(_value);
+      if (_onChanged != null) {
+        _onChanged(_value);
+      }
+    });
+  }
+
+  getValue() {
+    return _value;
+  }
+
+  setValue(int value) {
+    setState(() {
+      _value = value;
     });
   }
 
@@ -48,9 +64,9 @@ class _NumberPickerState extends State<NumberPicker> {
         children: <Widget>[
           new Container(
             child: new RaisedButton(
-              child: new Text("-"),
-              color: Colors.blueAccent,
-              splashColor: Colors.red,
+              child: new Text("-", style: new TextStyle(color: Colors.white)),
+              color: Colors.lightBlue,
+              splashColor: Colors.blueAccent,
               onPressed: _decrement,
             ),
             width: 40.0,
@@ -68,9 +84,9 @@ class _NumberPickerState extends State<NumberPicker> {
           ),
           new Container(
             child: new RaisedButton(
-              child: new Text("+"),
-              color: Colors.blueAccent,
-              splashColor: Colors.red,
+              child: new Text("+", style: new TextStyle(color: Colors.white)),
+              color: Colors.lightBlue,
+              splashColor: Colors.blueAccent,
               onPressed: _increment,
             ),
             width: 40.0,

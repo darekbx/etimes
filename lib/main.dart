@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:etimes/chartpainter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterantistorm/entriesstorage.dart';
-import 'package:flutterantistorm/entrycount.dart';
-import 'package:flutterantistorm/numberpicker.dart';
+import 'package:etimes/entriesstorage.dart';
+import 'package:etimes/numberpicker.dart';
 
 void main() => runApp(new MyApp());
 
@@ -11,53 +11,65 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var currentTime = _initializePickers();
     return new MaterialApp(
       title: 'E Times',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(title: 'E Times'),
+      home: new MainPage(
+          title: 'E Times',
+          hour: currentTime[0],
+          minute: currentTime[1]
+      ),
     );
+  }
+
+  _initializePickers() {
+    var now = new DateTime.now();
+    var hour = now.hour;
+    var minute = now.minute;
+    return [hour, minute];
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class MainPage extends StatefulWidget {
+  MainPage({Key key, this.title, this.hour, this.minute}) : super(key: key);
 
   final String title;
+  final int hour;
+  final int minute;
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MainPageState createState() => new _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  EntryCount entryCount;
+class _MainPageState extends State<MainPage> {
+
+  final hourKey = new GlobalKey<NumberPickerState>();
+  final minuteKey = new GlobalKey<NumberPickerState>();
+
   EntriesStorage entriesStorage;
-  int _timesCount = 0;
+  List<int> _values;
 
-  _MyHomePageState() {
-    entryCount = new EntryCount();
-    entryCount.loadState().then((value) {
-      setState(() {
-        _timesCount = value;
-      });
-    });
-
+  _MainPageState() {
     entriesStorage = new EntriesStorage();
     entriesStorage.loadEntries().then((list) {
-      print(list);
+      setState(() {
+        _values = list;
+      });
     });
   }
 
   Future _addEntry() async {
-    entryCount.addEntry().then((value) {
-      setState(() {
-        _timesCount = value;
-      });
-    });
-    entriesStorage.addEntry(new DateTime.now().millisecondsSinceEpoch);
+    var value = hourKey.currentState.getValue() * 60 +
+        minuteKey.currentState.getValue();
+
+    entriesStorage.addEntry(value);
     entriesStorage.loadEntries().then((list) {
-      print(list);
+      setState(() {
+        _values = list;
+      });
     });
   }
 
@@ -67,29 +79,53 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Align(
-        alignment: Alignment.topLeft,
-        child: new Padding(
-          padding: new EdgeInsets.all(18.0),
-
-          child: new Column(
+      body: new Padding(
+          padding: new EdgeInsets.fromLTRB(14.0, 14.0, 14.0, 26.0),
+          child:
+          new Column(
             children: <Widget>[
+              new Expanded(
 
-              new Text("Entries count: "),
-              new Text('$_timesCount'),
-              new NumberPicker(23, (value) {
-                print("Changed $value");
-              })
+                child: new Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    new Expanded(
+                    child: new CustomPaint(
+                        painter: new DotChartPainter(this._values)
+                  ),
+                    )
+                  ],
+                ),
+              ),
+              new Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
 
+                  new Padding(
+                    child: new Text("Choose time:"),
+                    padding: new EdgeInsets.fromLTRB(0.0, 14.0, 0.0, 8.0),
+                  ),
+                  new Row(
+                    children: <Widget>[
+                      new NumberPicker(23, null, widget.hour, key: hourKey),
+                      new Padding(
+                          padding: new EdgeInsets.fromLTRB(
+                              10.0, 0.0, 10.0, 0.0),
+                          child: new Text(":")
+                      ),
+                      new NumberPicker(59, null, widget.minute, key: minuteKey)
+                    ],
+
+                  ),
+                ],),
             ],
           ),
-
         ),
-      ),
       floatingActionButton: new FloatingActionButton(
         onPressed: _addEntry,
         tooltip: 'Increment',
-        child: new Icon(Icons.add),
+        child: new Icon(Icons.check),
       ),
     );
   }
