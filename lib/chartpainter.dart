@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class DotChartPainter extends CustomPainter {
 
+  double _top = 300.0;
+
   final List<int> values;
   var chartPaint = new Paint();
   var thinLinePaint = new Paint();
@@ -38,11 +40,24 @@ class DotChartPainter extends CustomPainter {
   }
 
   void drawValues(Size size, int max, double ratio, Canvas canvas) {
-    final double top = 180.0;
+    double top = _top;
+    int lastValue = null;
     for (final value in values) {
       var left = size.width - ((max - value) * ratio);
-      canvas.drawCircle(new Offset(left, top), 2.0, chartPaint);
 
+      if (lastValue != null) {
+        if (lastValue + 25.0 > value) {
+          top -= 6.0;
+        }
+
+        if (value - lastValue > 50.0) {
+          top = _top;
+        }
+      }
+
+      lastValue = value;
+
+      canvas.drawCircle(new Offset(left, top), 2.0, chartPaint);
       canvas.drawLine(new Offset(left, size.height - 10), new Offset(left, top), thinLinePaint);
     }
   }

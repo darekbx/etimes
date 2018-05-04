@@ -23,6 +23,7 @@ class EntriesStorage {
           linesInt.add(parsedValue);
         }
       }
+      linesInt.sort((a, b) => a.compareTo(b));
       return linesInt;
     }
     else {

@@ -96,6 +96,7 @@ class _MainPageState extends State<MainPage> {
                     )
                   ],
                 ),
+
               ),
               new Column(
                 mainAxisAlignment: MainAxisAlignment.end,

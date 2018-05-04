@@ -28,7 +28,7 @@ class NumberPickerState extends State<NumberPicker> {
   }
 
   _increment() {
-    if (_value >= _maximum) return;
+    if (_value >= _maximum) _value = -1;
     setState(() {
       _value = _value + 1;
       if (_onChanged != null) {
@@ -38,7 +38,7 @@ class NumberPickerState extends State<NumberPicker> {
   }
 
   _decrement() {
-    if (_value == 0) return;
+    if (_value == 0) _value = _maximum + 1;
     setState(() {
       _value = _value - 1;
       if (_onChanged != null) {
