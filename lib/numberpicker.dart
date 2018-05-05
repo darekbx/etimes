@@ -1,34 +1,39 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 class NumberPicker extends StatefulWidget {
 
   final int maximum;
+  final int minimum;
   final int initialValue;
   final ValueChanged<int> onChanged;
 
-  NumberPicker(@required this.maximum, this.onChanged, this.initialValue, {Key key}) :
+  NumberPicker({@required this.maximum, @required this.minimum, this.onChanged, this.initialValue, Key key}) :
         super(key: key);
 
   @override
   State<StatefulWidget> createState() =>
-      new NumberPickerState(maximum, initialValue, onChanged,);
+      new NumberPickerState(maximum, minimum, initialValue, onChanged,);
 }
 
 class NumberPickerState extends State<NumberPicker> {
 
   ValueChanged<int> _onChanged;
   int _maximum;
+  int _minimum;
   int _value = 0;
 
-  NumberPickerState(int maximum, int initialValue, ValueChanged<int> onChanged) {
+  NumberPickerState(int maximum, int minimum, int initialValue, ValueChanged<int> onChanged) {
     this._maximum = maximum;
-    this._value = initialValue;
+    this._minimum = minimum;
+    this._value = min(initialValue, maximum);
     this._onChanged = onChanged;
   }
 
   _increment() {
-    if (_value >= _maximum) _value = -1;
+    if (_value >= _maximum) _value = _minimum - 1;
     setState(() {
       _value = _value + 1;
       if (_onChanged != null) {
@@ -38,7 +43,8 @@ class NumberPickerState extends State<NumberPicker> {
   }
 
   _decrement() {
-    if (_value == 0) _value = _maximum + 1;
+    print("$_minimum");
+    if (_value == _minimum) _value = _maximum + 1;
     setState(() {
       _value = _value - 1;
       if (_onChanged != null) {

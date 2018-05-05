@@ -109,13 +109,13 @@ class _MainPageState extends State<MainPage> {
                   ),
                   new Row(
                     children: <Widget>[
-                      new NumberPicker(23, null, widget.hour, key: hourKey),
+                      new NumberPicker(maximum: 18, minimum: 8, onChanged: null, initialValue: widget.hour, key: hourKey),
                       new Padding(
                           padding: new EdgeInsets.fromLTRB(
                               10.0, 0.0, 10.0, 0.0),
                           child: new Text(":")
                       ),
-                      new NumberPicker(59, null, widget.minute, key: minuteKey)
+                      new NumberPicker(maximum: 59, minimum: 0, onChanged: null, initialValue: widget.minute, key: minuteKey)
                     ],
 
                   ),
