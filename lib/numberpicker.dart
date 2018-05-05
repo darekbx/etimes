@@ -43,7 +43,6 @@ class NumberPickerState extends State<NumberPicker> {
   }
 
   _decrement() {
-    print("$_minimum");
     if (_value == _minimum) _value = _maximum + 1;
     setState(() {
       _value = _value - 1;
