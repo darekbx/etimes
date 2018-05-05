@@ -18,14 +18,14 @@ class DotChartPainter extends CustomPainter {
     thinLinePaint.style = PaintingStyle.stroke;
     thinLinePaint.strokeWidth = 0.1;
 
-    textStyle = new TextStyle(color: Colors.red, fontSize: 10.0);
+    textStyle = new TextStyle(color: Colors.grey, fontSize: 10.0);
   }
 
   @override
   void paint(Canvas canvas, Size size) {
     if (values == null) return;
 
-    final int max = 23 * 60 + 59;
+    final int max = 10 * 60;
     final double ratio = size.width / max;
 
     drawHours(ratio, canvas, size);
@@ -43,7 +43,7 @@ class DotChartPainter extends CustomPainter {
     double top = _top;
     int lastValue = null;
     for (final value in values) {
-      var left = size.width - ((max - value) * ratio);
+      var left = size.width - ((max - (value - 8 * 60)) * ratio);
 
       if (lastValue != null) {
         if (lastValue + 25.0 > value) {
@@ -63,14 +63,23 @@ class DotChartPainter extends CustomPainter {
   }
 
   void drawHours(double ratio, Canvas canvas, Size size) {
-    for (var h = 2; h < 24; h += 2) {
+    for (var h = 8; h <= 18; h++) {
       var textSpan = new TextSpan(style: textStyle, text: "$h");
       var textPainter = new TextPainter(
-          text: textSpan, textAlign: TextAlign.left,
+          text: textSpan, textAlign: TextAlign.center,
           textDirection: TextDirection.ltr);
       textPainter.layout();
-      var left = h * 60 * ratio;
-      textPainter.paint(canvas, new Offset(left - 3, size.height - 5.0));
+      var left = (h - 8) * 60 * ratio;
+      canvas.drawLine(
+          new Offset(left, size.height - 13), new Offset(left, size.height - 6),
+          chartPaint);
+
+      if (h > 9) {
+        left -= 6;
+      } else {
+        left -= 3;
+      }
+      textPainter.paint(canvas, new Offset(left, size.height - 4.0));
     }
   }
 

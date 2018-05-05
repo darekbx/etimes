@@ -105,7 +105,7 @@ class _MainPageState extends State<MainPage> {
 
                   new Padding(
                     child: new Text("Choose time:"),
-                    padding: new EdgeInsets.fromLTRB(0.0, 14.0, 0.0, 8.0),
+                    padding: new EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 8.0),
                   ),
                   new Row(
                     children: <Widget>[
