@@ -28,7 +28,7 @@ class NumberPickerState extends State<NumberPicker> {
   NumberPickerState(int maximum, int minimum, int initialValue, ValueChanged<int> onChanged) {
     this._maximum = maximum;
     this._minimum = minimum;
-    this._value = min(initialValue, maximum);
+    this._value = min(max(initialValue, minimum), maximum);
     this._onChanged = onChanged;
   }
 
