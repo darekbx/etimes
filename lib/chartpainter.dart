@@ -7,6 +7,7 @@ class DotChartPainter extends CustomPainter {
   final List<int> values;
   var chartPaint = new Paint();
   var thinLinePaint = new Paint();
+  var timeLinePaint = new Paint();
   TextStyle textStyle;
 
   DotChartPainter(this.values) {
@@ -18,13 +19,15 @@ class DotChartPainter extends CustomPainter {
     thinLinePaint.style = PaintingStyle.stroke;
     thinLinePaint.strokeWidth = 0.1;
 
+    timeLinePaint.color = Colors.red;
+    timeLinePaint.style = PaintingStyle.stroke;
+    timeLinePaint.strokeWidth = 1.2;
+
     textStyle = new TextStyle(color: Colors.grey, fontSize: 10.0);
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (values == null) return;
-
     final int max = 10 * 60;
     final double ratio = size.width / max;
 
@@ -42,24 +45,36 @@ class DotChartPainter extends CustomPainter {
   void drawValues(Size size, int max, double ratio, Canvas canvas) {
     double top = _top;
     int lastValue = null;
-    for (final value in values) {
-      var left = size.width - ((max - (value - 8 * 60)) * ratio);
+    int padding = 13;
+    if (values != null) {
+      for (final value in values) {
+        var left = size.width - ((max - (value - 8 * 60)) * ratio);
 
-      if (lastValue != null) {
-        if (lastValue + 25.0 > value) {
-          top -= 6.0;
+        if (lastValue != null) {
+          if (lastValue + padding > value) {
+            top -= 6.0;
+          }
+
+          if (value - lastValue > (padding * 2)) {
+            top = _top;
+          }
         }
 
-        if (value - lastValue > 50.0) {
-          top = _top;
-        }
+        lastValue = value;
+
+        canvas.drawCircle(new Offset(left, top), 2.0, chartPaint);
+        canvas.drawLine(
+            new Offset(left, size.height - 10), new Offset(left, top),
+            thinLinePaint);
       }
-
-      lastValue = value;
-
-      canvas.drawCircle(new Offset(left, top), 2.0, chartPaint);
-      canvas.drawLine(new Offset(left, size.height - 10), new Offset(left, top), thinLinePaint);
     }
+
+    var now = new DateTime.now();
+    var hour = now.hour;
+    var minute = now.minute;
+    var value = hour * 60 + minute;
+    var left = size.width - ((max - (value - 8 * 60)) * ratio);
+    canvas.drawLine(new Offset(left, size.height - 15), new Offset(left, size.height - 5), timeLinePaint);
   }
 
   void drawHours(double ratio, Canvas canvas, Size size) {
@@ -71,7 +86,7 @@ class DotChartPainter extends CustomPainter {
       textPainter.layout();
       var left = (h - 8) * 60 * ratio;
       canvas.drawLine(
-          new Offset(left, size.height - 13), new Offset(left, size.height - 6),
+          new Offset(left, size.height - 14), new Offset(left, size.height - 6),
           chartPaint);
 
       if (h > 9) {

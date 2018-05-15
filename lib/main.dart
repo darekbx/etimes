@@ -54,11 +54,6 @@ class _MainPageState extends State<MainPage> {
 
   _MainPageState() {
     entriesStorage = new EntriesStorage();
-    entriesStorage.loadEntries().then((list) {
-      setState(() {
-        _values = list;
-      });
-    });
   }
 
   Future _addEntry() async {
@@ -90,9 +85,20 @@ class _MainPageState extends State<MainPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     new Expanded(
-                    child: new CustomPaint(
-                        painter: new DotChartPainter(this._values)
-                  ),
+                    child: new FutureBuilder<List<int>>(
+                      future: entriesStorage.loadEntries(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return new CustomPaint(
+                              painter: new DotChartPainter(snapshot.data)
+                          );
+                        } else if (snapshot.hasError) {
+                          return new Text("${snapshot.error}");
+                        }
+                        // By default, show a loading spinner
+                        return new CircularProgressIndicator();
+                      }
+                    ),
                     )
                   ],
                 ),
